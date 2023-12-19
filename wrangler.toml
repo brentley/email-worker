@@ -1,3 +1,8 @@
 name = "email-worker"
 main = "./src/index.ts"
+type = "webpack"
+
 compatibility_date = "2023-02-25"
+command = "npx webpack" # Build command
+format = "service-worker"
+

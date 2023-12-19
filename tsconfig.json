@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "noEmit": true,
+    "noEmit": false,
+    "outDir": "./dist",
     "module": "esnext",
     "target": "es2021",
     "lib": ["es2021"],
@@ -8,6 +9,7 @@
     "alwaysStrict": true,
     "preserveConstEnums": true,
     "moduleResolution": "node",
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "sourceMap": true,
