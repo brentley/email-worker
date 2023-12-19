@@ -4,8 +4,8 @@ import { splitEllipsis } from './splitMessage';
 const DISC_MAX_LEN = 2000;
 
 export async function email(message: any, env: any, ctx?: any): Promise<void> {
-  const url = env.DISCORD_WEBHOOK_URL;
-  if (!url) throw new Error('Missing DISCORD_WEBHOOK_URL');
+  const url = env.WEBHOOK_URL;
+  if (!url) throw new Error('Missing WEBHOOK_URL');
 
   try {
     // Parse email
@@ -15,7 +15,7 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
     const rawEmail = (await new Response(message.raw).text()).replace(/utf-8/gi, 'utf-8');
     const email = parseRawEmail(rawEmail);
 
-    // Send discord message
+    // Send message
     const intro = `Email from ${from} to ${to} with subject "${subject}":\n\n`;
     const [body = '(empty body)', ...rest] = splitEllipsis(email.text!, DISC_MAX_LEN, DISC_MAX_LEN - intro.length);
     const discordMessage = [`${intro}${body}`, ...rest];

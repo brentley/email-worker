@@ -4,7 +4,7 @@ import { email } from './email';
 
 describe(email.name, async () => {
   // @ts-ignore -- defined in .env using vitest-environment-miniflare
-  const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1234567890/abcdefghijklmnopqrstuvwxyz';
+  const WEBHOOK_URL = 'https://discord.com/api/webhooks/1234567890/abcdefghijklmnopqrstuvwxyz';
 
   // Disable Fetch API from making real network requests
   const fetchMock = getMiniflareFetchMock();
@@ -22,7 +22,7 @@ describe(email.name, async () => {
     const message: EmailMessage = await createEmailMessage();
 
     // Act
-    const call = email(message, { DISCORD_WEBHOOK_URL });
+    const call = email(message, { WEBHOOK_URL });
 
     // Assert
     await expect(call).resolves.toBeUndefined();
@@ -33,7 +33,7 @@ describe(email.name, async () => {
     const message: EmailMessage = await createEmailMessage();
 
     // Act
-    await email(message, { DISCORD_WEBHOOK_URL });
+    await email(message, { WEBHOOK_URL });
 
     // Assert
     fetchMock.assertNoPendingInterceptors();
@@ -45,11 +45,11 @@ describe(email.name, async () => {
     const message: EmailMessage = await createEmailMessage();
 
     // Act
-    await email(message, { DISCORD_WEBHOOK_URL });
+    await email(message, { WEBHOOK_URL });
 
     // Assert
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(fetchSpy).toHaveBeenCalledWith(DISCORD_WEBHOOK_URL, expect.anything());
+    expect(fetchSpy).toHaveBeenCalledWith(WEBHOOK_URL, expect.anything());
   });
 
   it('correctly passes the body to the webhook', async () => {
@@ -58,7 +58,7 @@ describe(email.name, async () => {
     const message: EmailMessage = await createEmailMessage({ body: 'Hello\nI have a question\nBye!' });
 
     // Act
-    await email(message, { DISCORD_WEBHOOK_URL });
+    await email(message, { WEBHOOK_URL });
 
     // Assert
     expect(fetchSpy).toHaveBeenCalledTimes(1);
@@ -84,7 +84,7 @@ describe(email.name, async () => {
     });
 
     // Act
-    await email(message, { DISCORD_WEBHOOK_URL });
+    await email(message, { WEBHOOK_URL });
 
     // Assert
     expect(fetchSpy).toHaveBeenCalledTimes(3);
@@ -96,10 +96,10 @@ describe(email.name, async () => {
     const message: EmailMessage = await createEmailMessage();
 
     // Act
-    const call = email(message, { DISCORD_WEBHOOK_URL: undefined });
+    const call = email(message, { WEBHOOK_URL: undefined });
 
     // Assert
-    await expect(call).rejects.toThrow('Missing DISCORD_WEBHOOK_URL');
+    await expect(call).rejects.toThrow('Missing WEBHOOK_URL');
   });
 
   it('reflects when no subject was given', async () => {
@@ -108,7 +108,7 @@ describe(email.name, async () => {
     const message: EmailMessage = await createEmailMessage({ subject: '' });
 
     // Act
-    const call = email(message, { DISCORD_WEBHOOK_URL });
+    const call = email(message, { WEBHOOK_URL });
 
     // Assert
     await expect(call).resolves.toBeUndefined();
@@ -127,7 +127,7 @@ describe(email.name, async () => {
     });
 
     // Act
-    const invocation = email(message, { DISCORD_WEBHOOK_URL });
+    const invocation = email(message, { WEBHOOK_URL });
     const calls = fetchSpy.mock.calls;
 
     // Assert
@@ -147,7 +147,7 @@ describe(email.name, async () => {
     });
 
     // Act
-    const invocation = email(message, { DISCORD_WEBHOOK_URL });
+    const invocation = email(message, { WEBHOOK_URL });
 
     // Assert
     await expect(invocation).resolves.toBeUndefined();
@@ -166,7 +166,7 @@ describe(email.name, async () => {
     });
 
     // Act
-    const invocation = email(message, { DISCORD_WEBHOOK_URL });
+    const invocation = email(message, { WEBHOOK_URL });
 
     // Assert
     await expect(invocation).rejects.toThrow('Failed to post error to Discord webhook.');
