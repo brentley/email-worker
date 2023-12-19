@@ -1,5 +1,4 @@
 import { extract as parseRawEmail } from 'letterparser';
-import { splitEllipsis } from './splitMessage';
 import { Parser } from 'htmlparser2';
 
 const DISC_MAX_LEN = 2000;
@@ -31,18 +30,16 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
             emailBody = extractTextFromHTML(email.html);
         }
 
-        const intro = `Email from ${from} to ${to} with subject "${subject}":\n\n`;
-        const [body = '(empty body)', ...rest] = splitEllipsis(emailBody, DISC_MAX_LEN, DISC_MAX_LEN - intro.length);
-        const discordMessage = [`${intro}${body}`, ...rest];
-        
-        for (const part of discordMessage) {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: part }),
-            });
-            if (!response.ok) throw new Error('Failed to post message to Discord webhook.' + (await response.json()));
-        }
+        const fullMessage = `Email from ${from} to ${to} with subject "${subject}":\n\n${emailBody || '(empty body)'}`;
+
+        // Send the entire email body as a single message
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: fullMessage }),
+        });
+        if (!response.ok) throw new Error('Failed to post message to Discord webhook.' + (await response.json()));
+
     } catch (error: any) {
         const response = await fetch(url, {
             method: 'POST',
