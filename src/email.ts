@@ -22,6 +22,7 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
     try {
         const { from, to } = message;
         const subject = message.headers.get('subject') || '(no subject)';
+        const date = new Date().toISOString(); // Current timestamp
         const rawEmail = (await new Response(message.raw).text()).replace(/utf-8/gi, 'utf-8');
         const email = parseRawEmail(rawEmail);
 
@@ -30,13 +31,17 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
             emailBody = extractTextFromHTML(email.html);
         }
 
-        const fullMessage = `Email from ${from} to ${to} with subject "${subject}":\n\n${emailBody || '(empty body)'}`;
-
-        // Send the entire email body as a single message
+        // Send the entire email body along with additional fields
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: fullMessage }),
+            body: JSON.stringify({
+                from,
+                to,
+                subject,
+                date,
+                content: emailBody || '(empty body)'
+            }),
         });
         if (!response.ok) throw new Error('Failed to post message to Discord webhook.' + (await response.json()));
 
