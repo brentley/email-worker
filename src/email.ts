@@ -20,7 +20,7 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
     if (!url) throw new Error('Missing WEBHOOK_URL');
 
     try {
-        const from = message.headers.get('from');
+        const from = message.headers.get('from').replace('"', '');
         const to = message.headers.get('to');
         const subject = message.headers.get('subject') || '(no subject)';
         const date = new Date().toISOString(); // Current timestamp
